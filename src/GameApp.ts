@@ -40,7 +40,7 @@ class GameApp extends egret.DisplayObjectContainer{
     private onAddToStage(event:egret.Event){
         // egret.Profiler.getInstance().run();
         // console.log("Hello World!");
-        
+
         //设置加载进度界面
         this.loadingView  = new LoadingUI();
         this.stage.addChild(this.loadingView);
@@ -49,6 +49,7 @@ class GameApp extends egret.DisplayObjectContainer{
         RES.addEventListener(RES.ResourceEvent.CONFIG_COMPLETE,this.onConfigComplete,this);
         RES.loadConfig("resource/resource.json","resource/");
 
+        new ZDateDemo();
     }
     /**
      * 配置文件加载完成,开始预加载preload资源组。
