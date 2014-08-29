@@ -128,9 +128,50 @@ class GameApp extends egret.DisplayObjectContainer{
 
         this.textContainer = textContainer;
 
+        this.placeMarios();
+
         //根据name关键字，异步获取一个json配置文件，name属性请参考resources/resource.json配置文件的内容。
         RES.getResAsync("description",this.startAnimation,this)
     }
+
+
+    private placeMarios():void {
+        var imgs:egret.SpriteSheet = RES.getRes("marios");
+        
+        var mario1:egret.Bitmap = new egret.Bitmap();
+        mario1.texture = imgs.getTexture("mario1");
+        mario1.x = 0;
+        this.addChild(mario1);
+
+        var brick1 = new egret.Bitmap();
+        brick1.texture = imgs.getTexture("brick1");
+        brick1.x = 0;
+        // this.addChild(brick1);
+
+        var brick2 = new egret.Bitmap();
+        brick2.texture = imgs.getTexture("brick2");
+        brick2.x = 200;
+        // this.addChild(brick2);
+
+        var change:Function = function() {
+            // console.log("x=" + mario1.x);
+            var tw = egret.Tween.get(mario1);
+            if (mario1.x == 200) {
+                mario1.texture = imgs.getTexture("mario2");
+                tw.to({"x":0}, 2000);
+            } else if (mario1.x == 0) {
+                mario1.texture = imgs.getTexture("mario1");
+                tw.to({"x":200}, 2000);
+            } else {
+                return;
+            }
+
+            tw.call(change, this);
+        }
+
+        change();
+    }
+
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
      */
