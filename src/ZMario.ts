@@ -2,25 +2,29 @@ class ZMario extends egret.DisplayObjectContainer {
 
 	public constructor() {
         super();
-		this.placeSprites();
+		this.resetScene();
 	}	
 
     private txt:egret.TextField;
     private imgs:egret.SpriteSheet;
     private mario1:egret.Bitmap;
+    private mushes:egret.Bitmap[] = [];
 
-    private placeSprites():void {
+    private resetScene():void {
     	this.imgs = RES.getRes("marios");
 
 
-        this.placeMario();
-        this.placeBricks();
-        for (var i = 0; i < 4; i++) {
-        	var randX = Math.floor(Math.random() * 80);
-	        this.placeMush(randX, i * 100);
-        }
         this.drawGround();
         this.drawText();
+
+        this.placeMario();
+        this.placeBricks();
+        for (var i = 0; i < 5; i++) {
+        	var randX = Math.random() * 400;
+            var randSpeed = Math.floor(Math.random() * 1000) + 1000;
+	        this.placeMush(randX, 0, randSpeed);
+        }
+        this.startAni();
     }
 
     private placeMario() {        
@@ -71,19 +75,59 @@ class ZMario extends egret.DisplayObjectContainer {
 
     }
 
-    private placeMush(x:number, y:number):void {        
+    private placeMush(x:number, y:number, speed:number):void {        
         var mush1:egret.Bitmap = new egret.Bitmap();
         mush1.texture = this.imgs.getTexture("mush1");
         mush1.x = x;
-        mush1.y = y;
+        mush1.y = 0;
         mush1.scaleX = 0.5;
         mush1.scaleY = 0.5;
         this.addChild(mush1);
 
+        this.mushes.push(mush1);
 
-        var tw = egret.Tween.get(mush1, {loop:true})
-        		.to({"x":400}, 2000).to({"x":x}, 2000);
+
+        // var tw = egret.Tween.get(mush1, {loop:true}).to({"x":400}, 2000).to({"x":x}, 2000);
+
+        var tw1 = egret.Tween.get(mush1, {loop:true}).to({y: 500}, speed).to({y: 0}, 0);
+
+
     }
+
+    private startAni() {
+        var counter = 0;
+        var txt = this.txt;
+        var mario1 = this.mario1;
+        var mushes = this.mushes;
+        var change:Function = function() {
+            // console.log("x=" + mario1.x);
+            var tw = egret.Tween.get(mario1);
+            // if (mario1.x == 200) {
+            //     mario1.texture = imgs.getTexture("mario2");
+            //     tw.to({"x":0}, 2000);
+            // } else if (mario1.x == 0) {
+            //     mario1.texture = imgs.getTexture("mario1");
+            //     tw.to({"x":200}, 2000);
+            // } else {
+            //     return;
+            // }
+
+            mushes.forEach((item, index, array) => {
+                if (item.hitTestPoint(mario1.x, mario1.y)) {
+                    console.log("gocha one");
+                }
+
+            });
+            counter++;
+            txt.text = "左右点击来移动玛丽" + counter;
+            tw.wait(20);
+            tw.call(change, this);
+        }
+
+        change();
+
+    }
+
 
     private drawText():void
     {
