@@ -64,6 +64,7 @@ class GameApp extends egret.DisplayObjectContainer{
      * preload资源组加载完成
      */
     private onResourceLoadComplete(event:RES.ResourceEvent):void {
+        console.log(event);
         if(event.groupName=="preload"){
             this.stage.removeChild(this.loadingView);
             RES.removeEventListener(RES.ResourceEvent.GROUP_COMPLETE,this.onResourceLoadComplete,this);
@@ -75,6 +76,7 @@ class GameApp extends egret.DisplayObjectContainer{
      * preload资源组加载进度
      */
     private onResourceProgress(event:RES.ResourceEvent):void {
+        console.log(event);
         if(event.groupName=="preload"){
             this.loadingView.setProgress(event.itemsLoaded,event.itemsTotal);
         }
@@ -129,7 +131,7 @@ class GameApp extends egret.DisplayObjectContainer{
         this.textContainer = textContainer;
 
         //根据name关键字，异步获取一个json配置文件，name属性请参考resources/resource.json配置文件的内容。
-        RES.getResAsync("description",this.startAnimation,this);
+        // RES.getResAsync("description",this.startAnimation,this);
 
         this.addChild(new ZMario());
 
