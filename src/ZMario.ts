@@ -12,9 +12,7 @@ class ZMario extends egret.DisplayObjectContainer {
 
     private resetScene():void {
     	this.imgs = RES.getRes("marios");
-
-
-
+        
         this.drawGround();
         this.drawText();
 
@@ -28,7 +26,10 @@ class ZMario extends egret.DisplayObjectContainer {
 	        this.placeMush(randX, 0, randSpeed);
         }
         this.startAni();
+        this.installTimer();
     }
+
+
 
     private placeMario() {        
         this.mario1 = new egret.Bitmap();
@@ -85,9 +86,9 @@ class ZMario extends egret.DisplayObjectContainer {
         mush1.y = 0;
         mush1.scaleX = 0.5;
         mush1.scaleY = 0.5;
-        mush1.tw = egret.Tween.get(mush1, {loop:true}).to({y: 500}, speed).to({y: 0}, 0);
         this.addChild(mush1);
 
+        egret.Tween.get(mush1, {loop:true}).to({y: 500}, speed).to({y: 0}, 0);
         this.mushes.push(mush1);
 
 
@@ -104,28 +105,19 @@ class ZMario extends egret.DisplayObjectContainer {
         var change:Function = function() {
             // console.log("x=" + mario1.x);
             var tw = egret.Tween.get(mario1);
-            // if (mario1.x == 200) {
-            //     mario1.texture = imgs.getTexture("mario2");
-            //     tw.to({"x":0}, 2000);
-            // } else if (mario1.x == 0) {
-            //     mario1.texture = imgs.getTexture("mario1");
-            //     tw.to({"x":200}, 2000);
-            // } else {
-            //     return;
-            // }
 
             mushes.forEach((item, index, array) => {
                 if (isHitSprite(item, mario1)) {
                     coins++;
+                    egret.Tween.removeTweens(item);
                     item.y = 0;
                     item.x = Math.random() * 400;
                     var speed = Math.floor(Math.random() * 1000) + 1000;
-                    item.tw = egret.Tween.get(item, {loop:true}).to({y: 500}, speed).to({y: 0}, 0);
+                    egret.Tween.get(item, {loop:true}).to({y: 500}, speed).to({y: 0}, 0);
                 }
-
             });
             counter++;
-            txt.text = "Coins=" + coins + " 左右点击来移动玛丽 " + counter;
+            txt.text = "Coins=" + coins + " \n左右点击来移动玛丽 " + counter;
             tw.wait(20);
             tw.call(change, this);
         }
@@ -167,4 +159,20 @@ class ZMario extends egret.DisplayObjectContainer {
 		this.addChild( shp );    	
     }
 
+
+    private installTimer() {
+        var timer:egret.Timer = new egret.Timer(3000, 0);
+        timer.addEventListener(egret.TimerEvent.TIMER,this.timerFunc,this);
+        timer.addEventListener(egret.TimerEvent.TIMER_COMPLETE,this.timerComFunc,this);
+        timer.start();
+    }
+
+    private timerFunc()
+    {
+        console.log("计时");
+    }
+    private timerComFunc()
+    {
+        console.log("计时结束");
+    }
 }
