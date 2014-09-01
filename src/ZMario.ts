@@ -8,10 +8,11 @@ class ZMario extends egret.DisplayObjectContainer {
     private txt:egret.TextField;
     private imgs:egret.SpriteSheet;
     private mario1:egret.Bitmap;
-    private mushes:egret.Bitmap[] = [];
+    private mushes:egret.Bitmap[];
 
     private resetScene():void {
     	this.imgs = RES.getRes("marios");
+
 
 
         this.drawGround();
@@ -19,6 +20,8 @@ class ZMario extends egret.DisplayObjectContainer {
 
         this.placeMario();
         this.placeBricks();
+        
+        this.mushes = [];
         for (var i = 0; i < 5; i++) {
         	var randX = Math.random() * 400;
             var randSpeed = Math.floor(Math.random() * 1000) + 1000;
@@ -82,14 +85,10 @@ class ZMario extends egret.DisplayObjectContainer {
         mush1.y = 0;
         mush1.scaleX = 0.5;
         mush1.scaleY = 0.5;
+        mush1.tw = egret.Tween.get(mush1, {loop:true}).to({y: 500}, speed).to({y: 0}, 0);
         this.addChild(mush1);
 
         this.mushes.push(mush1);
-
-
-        // var tw = egret.Tween.get(mush1, {loop:true}).to({"x":400}, 2000).to({"x":x}, 2000);
-
-        var tw1 = egret.Tween.get(mush1, {loop:true}).to({y: 500}, speed).to({y: 0}, 0);
 
 
     }
@@ -99,6 +98,9 @@ class ZMario extends egret.DisplayObjectContainer {
         var txt = this.txt;
         var mario1 = this.mario1;
         var mushes = this.mushes;
+        var coins = 0;
+        var isHitSprite = this.isHitSprite;
+
         var change:Function = function() {
             // console.log("x=" + mario1.x);
             var tw = egret.Tween.get(mario1);
@@ -113,13 +115,17 @@ class ZMario extends egret.DisplayObjectContainer {
             // }
 
             mushes.forEach((item, index, array) => {
-                if (item.hitTestPoint(mario1.x, mario1.y)) {
-                    console.log("gocha one");
+                if (isHitSprite(item, mario1)) {
+                    coins++;
+                    item.y = 0;
+                    item.x = Math.random() * 400;
+                    var speed = Math.floor(Math.random() * 1000) + 1000;
+                    item.tw = egret.Tween.get(item, {loop:true}).to({y: 500}, speed).to({y: 0}, 0);
                 }
 
             });
             counter++;
-            txt.text = "左右点击来移动玛丽" + counter;
+            txt.text = "Coins=" + coins + " 左右点击来移动玛丽 " + counter;
             tw.wait(20);
             tw.call(change, this);
         }
@@ -128,6 +134,12 @@ class ZMario extends egret.DisplayObjectContainer {
 
     }
 
+    private isHitSprite(self:egret.Bitmap, other:egret.Bitmap):boolean {
+        return self.hitTestPoint(other.x, other.y) 
+            || self.hitTestPoint(other.x + other.width, other.y)
+            || self.hitTestPoint(other.x, other.y + other.height)
+            || self.hitTestPoint(other.x + other.width, other.y + other.height);
+    }
 
     private drawText():void
     {
