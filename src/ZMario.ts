@@ -160,19 +160,24 @@ class ZMario extends egret.DisplayObjectContainer {
     }
 
 
+    private lastTime = 0;
+
     private installTimer() {
-        var timer:egret.Timer = new egret.Timer(3000, 0);
+        var timer:egret.Timer = new egret.Timer(500, 5);
         timer.addEventListener(egret.TimerEvent.TIMER,this.timerFunc,this);
         timer.addEventListener(egret.TimerEvent.TIMER_COMPLETE,this.timerComFunc,this);
+        this.lastTime = new Date().getTime();
         timer.start();
     }
 
-    private timerFunc()
+    private timerFunc(evt)
     {
-        console.log("计时");
+        var newTime = new Date().getTime();
+        console.log(newTime - this.lastTime);
+        this.lastTime = newTime;
     }
     private timerComFunc()
     {
-        console.log("计时结束");
+        console.log(this.lastTime);
     }
 }
